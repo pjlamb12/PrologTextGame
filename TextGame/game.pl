@@ -11,7 +11,7 @@
 
 :- use_module(library(readln)).
 
-% Use this dynamic fact to store the player's current location
+% Use this dynamic fact to store the players current location
 :- dynamic current_area/1.	
 
 % Here is one way you might create your areas
@@ -57,7 +57,7 @@ process_input([_]) :-
 % Add some help output here to explain how to play your game
 process_input([help]) :- print('Add some help output here...'), nl.
 
-%%%% Below is just some basic input handling, you probably don't have to mess with it %%%%
+%%%% Below is just some basic input handling, you probably dont have to mess with it %%%%
 
 % Get input from the user
 get_input :- read_sentence(Input), get_input(Input).
