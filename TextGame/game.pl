@@ -15,17 +15,38 @@
 :- dynamic current_area/1.	
 
 % Here is one way you might create your areas
-area(exampleArea1, 'First Area', 'You find yourself in a simple example area').
-area(exampleArea2, 'Second Area', 'You look around and find yourself in a an area...full of nothing').
+area(room1, 'Room 1', 'You find yourself in a simple example area').
+area(room2, 'Room 2', 'You look around and find yourself in a an area...full of nothing').
+area(room3, 'Room 3', 'You look around and find yourself in a an area...full of nothing').
+area(room4, 'Room 4', 'You look around and find yourself in a an area...full of nothing').
+area(room5, 'Room 5', 'You look around and find yourself in a an area...full of nothing').
+area(room6, 'Room 6', 'You look around and find yourself in a an area...full of nothing').
+area(room7, 'Room 7', 'You look around and find yourself in a an area...full of nothing').
+area(room8, 'Room 8', 'You look around and find yourself in a an area...full of nothing').
+area(room9, 'Room 9', 'You look around and find yourself in a an area...full of nothing').
 
 % You might connect those areas like this:
-connected(north, exampleArea1, exampleArea2).
-connected(south, exampleArea2, exampleArea1).
+connected(south, room1, room4).
+connected(north, room4, room1).
+connected(east, room1, room2).
+connected(east, room2, room3).
+connected(west, room3, room2).
+connected(south, room2, room5).
+connected(west, room5, room4).
+connected(south, room4, room7).
+connected(north, room7, room4).
+connected(east, room7, room8).
+connected(north, room8, room5).
+connected(south, room5, room8).
+connected(south, room3, room6).
+connected(north, room6, room3).
+connected(south, room6, room9).
+connected(north, room9, room6).
 
 % This rule starts everything off
 play :-
     retractall(current_area(_)),
-    assertz(current_area(exampleArea1)),
+    assertz(current_area(room8)),
     print_location,
 	dispPrompt,
     get_input.
