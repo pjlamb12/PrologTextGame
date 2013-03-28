@@ -1,0 +1,8 @@
+:- dynamic have/1.
+assertz(have(Item)).
+?- have(Item).
+?- have(X).
+retract takes one away
+findall(have(X)). % this will give you a list, then just print out the list
+
+consult('file_name')
