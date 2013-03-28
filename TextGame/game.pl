@@ -15,32 +15,32 @@
 :- dynamic current_area/1.	
 
 % Here is one way you might create your areas
-area(room1, 'Room 1', 'You find yourself in a simple example area').
-area(room2, 'Room 2', 'You look around and find yourself in a an area...full of nothing').
-area(room3, 'Room 3', 'You look around and find yourself in a an area...full of nothing').
-area(room4, 'Room 4', 'You look around and find yourself in a an area...full of nothing').
-area(room5, 'Room 5', 'You look around and find yourself in a an area...full of nothing').
-area(room6, 'Room 6', 'You look around and find yourself in a an area...full of nothing').
-area(room7, 'Room 7', 'You look around and find yourself in a an area...full of nothing').
-area(room8, 'Room 8', 'You look around and find yourself in a an area...full of nothing').
-area(room9, 'Room 9', 'You look around and find yourself in a an area...full of nothing').
+area(room1, 'Room 1', 'You are in Room 1').
+area(room2, 'Room 2', 'You are in Room 2').
+area(room3, 'Room 3', 'You are in Room 3').
+area(room4, 'Room 4', 'You are in Room 4').
+area(room5, 'Room 5', 'You are in Room 5').
+area(room6, 'Room 6', 'You are in Room 6').
+area(room7, 'Room 7', 'You are in Room 7').
+area(room8, 'Room 8', 'You are in Room 8').
+area(room9, 'Room 9', 'You are in Room 9').
 
 % You might connect those areas like this:
 connected(south, room1, room4).
-connected(north, room4, room1).
 connected(east, room1, room2).
 connected(east, room2, room3).
-connected(west, room3, room2).
 connected(south, room2, room5).
-connected(west, room5, room4).
+connected(west, room3, room2).
+connected(south, room3, room6).
+connected(north, room4, room1).
 connected(south, room4, room7).
+connected(west, room5, room4).
+connected(south, room5, room8).
+connected(north, room6, room3).
+connected(south, room6, room9).
 connected(north, room7, room4).
 connected(east, room7, room8).
 connected(north, room8, room5).
-connected(south, room5, room8).
-connected(south, room3, room6).
-connected(north, room6, room3).
-connected(south, room6, room9).
 connected(north, room9, room6).
 
 % This rule starts everything off
@@ -65,6 +65,15 @@ change_area(NewArea) :-
 % Displays the player prompt so they can enter actions
 dispPrompt :- prompt(_, '> ').
 
+% Add some help output here to explain how to play your game
+process_input([help]) :- print('Add some help output here...'), nl.
+
+% Handling of the action 'pickup _______'
+process_input([pickup, Item]):-
+    print('You picked up an item.'), nl, nl.
+process_input([pickup, _]) :-
+    print('There is nothing to pick up. Sorry!'), nl, nl.
+
 % Handling of the action 'go _______', and a good example of how you might implement others
 process_input([go, Direction]) :-
     current_area(Current),
@@ -75,8 +84,6 @@ process_input([go, _]) :-
 process_input([_]) :-
     print('No idea what you are talking about...try again'), nl, nl.
 
-% Add some help output here to explain how to play your game
-process_input([help]) :- print('Add some help output here...'), nl.
 
 %%%% Below is just some basic input handling, you probably dont have to mess with it %%%%
 
