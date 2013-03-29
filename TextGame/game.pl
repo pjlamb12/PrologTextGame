@@ -12,7 +12,7 @@
 :- use_module(library(readln)).
 
 % Use this dynamic fact to store the players current location
-:- dynamic current_area/1.	
+:- dynamic current_area/1.
 
 % Here is one way you might create your areas
 area(room1, 'Room 1', 'You are in Room 1').
