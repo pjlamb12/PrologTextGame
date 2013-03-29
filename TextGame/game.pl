@@ -74,9 +74,14 @@ dispPrompt :- prompt(_, '> ').
 % Add some help output here to explain how to play your game
 process_input([help]) :- print('Add some help output here...'), nl.
 
+% Print out a players inventory
+process_input([inventory]) :-
+    print(findall(X, have(X), InventoryList)), nl, nl.
+
 % Handling of the action 'pickup _______'
 process_input([pickup, Item]):-
     print('You picked up an item.'), nl, nl.
+    assertz(have(Item)).
 process_input([pickup, _]) :-
     print('There is nothing to pick up. Sorry!'), nl, nl.
 
