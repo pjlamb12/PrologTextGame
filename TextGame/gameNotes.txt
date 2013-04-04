@@ -5,4 +5,4 @@ assertz(have(Item)).
 retract takes one away
 findall(have(X)). % this will give you a list, then just print out the list
 
-consult('file_name')
+consult('/home/preston/GitHub Projects/PrologTextGame/TextGame/game.pl').

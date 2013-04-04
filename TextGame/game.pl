@@ -19,6 +19,15 @@
 
 % These are the items they can pick up
 item(key, 'Key', 'A key to open locked doors').
+item(shield, 'Shield', 'A shield to protect you').
+item(sword, 'Sword', 'A sword with which to fight').
+item(flashlight, 'Flashlight', 'The ligth will guide you through certain rooms').
+item(irondoor, 'Iron Door', 'This door stands between you and the final room').
+item(belt, 'Belt', 'The belt will hold your sword and flashlight').
+item(bridge, 'Wooden Bridge', 'The switch will lower the bridge between two rooms').
+item(food, 'Food', 'The food will give you extra energy').
+item(passage, 'Secret Passage', 'This passage will take you to the final room').
+item(coin, 'Gold Coin', 'This gold coin is necessary to get in to the final room').
 
 % Here is one way you might create your areas
 area(room1, 'Room 1', 'You are in Room 1').
@@ -62,6 +71,10 @@ print_location :-
     current_area(Current),
     area(Current, _, Description), write(Description), nl. 
 
+print_inventory :-
+    ?- findall(X, have(X), InventoryList),
+    write(InventoryList), nl.
+
 % Changes the players current location, validity of change is checked earlier
 change_area(NewArea) :-
     current_area(Current),
@@ -76,7 +89,7 @@ process_input([help]) :- print('Add some help output here...'), nl.
 
 % Print out a players inventory
 process_input([inventory]) :-
-    print(findall(X, have(X), InventoryList)), nl, nl.
+    print_inventory.
 
 % Handling of the action 'pickup _______'
 process_input([pickup, Item]):-
