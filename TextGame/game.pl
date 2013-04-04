@@ -18,7 +18,7 @@
 :- dynamic have/1.
 
 % These are the items they can pick up
-item(key, 'Gold key to open doors').
+item(key, 'Key', 'A key to open locked doors').
 
 % Here is one way you might create your areas
 area(room1, 'Room 1', 'You are in Room 1').
@@ -80,8 +80,8 @@ process_input([inventory]) :-
 
 % Handling of the action 'pickup _______'
 process_input([pickup, Item]):-
+    assertz(have(Item)),
     print('You picked up an item.'), nl, nl.
-    assertz(have(Item)).
 process_input([pickup, _]) :-
     print('There is nothing to pick up. Sorry!'), nl, nl.
 
