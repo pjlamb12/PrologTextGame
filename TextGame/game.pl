@@ -61,6 +61,7 @@ connected(north, room9, room6).
 % This rule starts everything off
 play :-
     retractall(current_area(_)),
+    retractall(have(_)),
     assertz(current_area(room8)),
     print_location,
 	dispPrompt,
@@ -70,10 +71,6 @@ play :-
 print_location :-
     current_area(Current),
     area(Current, _, Description), write(Description), nl. 
-
-print_inventory :-
-    ?- findall(X, have(X), InventoryList),
-    write(InventoryList), nl.
 
 % Changes the players current location, validity of change is checked earlier
 change_area(NewArea) :-
@@ -89,12 +86,14 @@ process_input([help]) :- print('Add some help output here...'), nl.
 
 % Print out a players inventory
 process_input([inventory]) :-
-    print_inventory.
+    findall(Item, have(Item), ItemList),
+    print(ItemList), nl.
 
 % Handling of the action 'pickup _______'
 process_input([pickup, Item]):-
     assertz(have(Item)),
-    print('You picked up an item.'), nl, nl.
+    item(Item, ItemName, Description),
+    print('You picked up a(n) '), write(ItemName), print('. Description: '), print(Description), nl, nl.
 process_input([pickup, _]) :-
     print('There is nothing to pick up. Sorry!'), nl, nl.
 
