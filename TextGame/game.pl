@@ -17,6 +17,9 @@
 % Use this dynamic fact to add to the inventory
 :- dynamic have/1.
 
+% Use this dynamic fact to unlock doors and other similar items
+:- dynamic unlocked/1.
+
 % These are the items they can pick up
 item(key, 'Key', 'A key to open locked doors').
 item(shield, 'Shield', 'A shield to protect you').
@@ -24,8 +27,8 @@ item(sword, 'Sword', 'A sword with which to fight').
 item(flashlight, 'Flashlight', 'The ligth will guide you through certain rooms').
 item(irondoor, 'Iron Door', 'This door stands between you and the final room').
 item(belt, 'Belt', 'The belt will hold your sword and flashlight').
-item(bridge, 'Wooden Bridge', 'The switch will lower the bridge between two rooms').
-item(food, 'Food', 'The food will give you extra energy').
+item(elevator, 'Elevator', 'The elevator will take you to the top floor').
+item(candy, 'Candybar', 'The Snickers bar will give you extra energy').
 item(passage, 'Secret Passage', 'This passage will take you to the final room').
 item(coin, 'Gold Coin', 'This gold coin is necessary to get in to the final room').
 
@@ -36,9 +39,20 @@ area(room3, 'Room 3', 'You are in Room 3').
 area(room4, 'Room 4', 'You are in Room 4').
 area(room5, 'Room 5', 'You are in Room 5').
 area(room6, 'Room 6', 'You are in Room 6').
-area(room7, 'Room 7', 'You are in Room 7').
-area(room8, 'Room 8', 'You are in Room 8').
-area(room9, 'Room 9', 'You are in Room 9').
+area(room7, 'Quick Stop', 'You have entered the Quick Stop. All the partying and dancing has made you hungry. ').
+area(room8, 'Admissions Office', 'You are in the Admissions office. You look around and see a lot of desks, but because it is after hours nobody is there working. Don\'t forget to leave without something to carry your items you will get throughout the night...').
+area(room9, 'Ballroom', 'You have reached the ballroom!').
+
+% Place the items in rooms
+placed(room8, key).
+
+% What you can pick up and what you cant
+can_pickup(key).
+can_pickup(backpack).
+can_pickup(flashlight).
+can_pickup(candy).
+
+
 
 % You might connect those areas like this:
 connected(south, room1, room4).
@@ -63,14 +77,26 @@ play :-
     retractall(current_area(_)),
     retractall(have(_)),
     assertz(current_area(room8)),
+    print_introduction,
     print_location,
 	dispPrompt,
     get_input.
+
+% Prints out a welcome and introduction
+print_introduction:-
+    print('Welcome to Adventures at Utah State University. Go ahead and walk through some of the different rooms in the TSC that you may be familiar with.'), nl,
+    print('As you go from one room to another, you will see a description of that room.'), nl,
+    print('Remember that you are at the TSC during the HOWL Halloween party, so crazy stuff happens. When you\'re ready to start your quest, just type \'quest\'.'), nl,
+    print('Hope you enjoy!'), nl, nl.
 
 % Prints out the players current location description
 print_location :-
     current_area(Current),
     area(Current, _, Description), write(Description), nl. 
+
+print_inventory([]).
+print_inventory([H|T]):-
+    item(H, ItemName, Description), write(ItemName), tab(4), write(Description), nl, print_inventory(T).
 
 % Changes the players current location, validity of change is checked earlier
 change_area(NewArea) :-
@@ -84,18 +110,27 @@ dispPrompt :- prompt(_, '> ').
 % Add some help output here to explain how to play your game
 process_input([help]) :- print('Add some help output here...'), nl.
 
+% Opens doors and such if it is unlocked
+process_input([open, Item]):-
+    unlocked(Item),
+    print('You have opened the door!'), nl.
+process_input([open, _]):-
+    print('You can\'t open the door, it is still locked.'), nl.
+
 % Print out a players inventory
 process_input([inventory]) :-
     findall(Item, have(Item), ItemList),
-    print(ItemList), nl.
+    print_inventory(ItemList).
 
 % Handling of the action 'pickup _______'
 process_input([pickup, Item]):-
+    current_area(Current),
+    placed(Current, Item),
     assertz(have(Item)),
     item(Item, ItemName, Description),
     print('You picked up a(n) '), write(ItemName), print('. Description: '), print(Description), nl, nl.
 process_input([pickup, _]) :-
-    print('There is nothing to pick up. Sorry!'), nl, nl.
+    print('There is nothing to pick up with that description. Sorry!'), nl, nl.
 
 % Handling of the action 'go _______', and a good example of how you might implement others
 process_input([go, Direction]) :-
