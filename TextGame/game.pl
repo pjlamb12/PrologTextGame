@@ -17,42 +17,61 @@
 % Use this dynamic fact to add to the inventory
 :- dynamic have/1.
 
+% This is similar to the inventory, but to put items in your backpack
+:- dynamic in_backpack/1.
+
 % Use this dynamic fact to unlock doors and other similar items
 :- dynamic unlocked/1.
 
 % These are the items they can pick up
 item(key, 'Key', 'A key to open locked doors').
-item(shield, 'Shield', 'A shield to protect you').
-item(sword, 'Sword', 'A sword with which to fight').
-item(flashlight, 'Flashlight', 'The ligth will guide you through certain rooms').
-item(irondoor, 'Iron Door', 'This door stands between you and the final room').
-item(belt, 'Belt', 'The belt will hold your sword and flashlight').
+item(idcard, 'ID Card', 'A shield to protect you').
+item(mask, 'Mask', 'This is the rest of your costume and will hide your identity').
+item(flashlight, 'Flashlight', 'The light will guide you through certain rooms').
+item(door, 'Door', 'This door stands between you and the final room').
+item(backpack, 'Backpack', 'The backpack will hold items that you pick up').
 item(elevator, 'Elevator', 'The elevator will take you to the top floor').
-item(candy, 'Candybar', 'The Snickers bar will give you extra energy').
+item(candy, 'Snickers', 'The Snickers bar will give you extra energy').
+item(drink, 'Dr. Pepper', 'The Dr. Pepper will quench your thirst').
 item(passage, 'Secret Passage', 'This passage will take you to the final room').
-item(coin, 'Gold Coin', 'This gold coin is necessary to get in to the final room').
+item(money, 'Money', 'This gold coin is necessary to get in to the final room').
 
 % Here is one way you might create your areas
-area(room1, 'Room 1', 'You are in Room 1').
-area(room2, 'Room 2', 'You are in Room 2').
-area(room3, 'Room 3', 'You are in Room 3').
-area(room4, 'Room 4', 'You are in Room 4').
-area(room5, 'Room 5', 'You are in Room 5').
-area(room6, 'Room 6', 'You are in Room 6').
-area(room7, 'Quick Stop', 'You have entered the Quick Stop. All the partying and dancing has made you hungry. ').
-area(room8, 'Admissions Office', 'You are in the Admissions office. You look around and see a lot of desks, but because it is after hours nobody is there working. Don\'t forget to leave without something to carry your items you will get throughout the night...').
-area(room9, 'Ballroom', 'You have reached the ballroom!').
+area(room1, 'The Registrar\'s Office', 'You are in Room 1').
+area(room2, 'The Ballroom', 'You are in Room 2').
+area(room3, 'The Bookstore', 'You are in Room 3').
+area(room4, 'The Marketplace', 'You are in Room 4').
+area(room5, 'The Hub', 'You have just entered the Hub, where many people are hanging out. You see some friends and go over to see what they\'re up to. After talking to them you look around for an item that will empty your hands a little bit and make walking around a little easier...').
+area(room6, 'Sunburst Lounge', 'The Sunburst Lounge is bouncin. There is a live band playing up front, and hundreds of people milling about, making it really difficult to be able to find where the key you will need later in the quest is hidden.').
+area(room7, 'Quick Stop', 'You have entered the Quick Stop. All the partying and dancing has made you hungry. You step in here for a quick second to refuel.').
+area(room8, 'Admissions Office', 'You are in the Admissions office. You look around and see a lot of desks, but because it is after hours nobody is there working. Don\'t forget to leave without the rest of your costume.').
+area(room9, 'The Sky Room', 'You have reached the Sky Room!').
 
 % Place the items in rooms
-placed(room8, key).
+placed(room1, passage).
+placed(room2, door).
+placed(room3, backpack).
+placed(room4, flashlight).
+placed(room4, drink).
+placed(room5, backpack).
+placed(room6, key).
+placed(room7, candy).
+placed(room7, drink).
+placed(room8, mask).
+placed(room9, idcard).
+placed(room10, elevator).
 
 % What you can pick up and what you cant
 can_pickup(key).
 can_pickup(backpack).
 can_pickup(flashlight).
 can_pickup(candy).
+can_pickup(money).
+can_pickup(idcard).
+can_pickup(mask).
 
-
+% Can eat an item
+can_eat(candy).
 
 % You might connect those areas like this:
 connected(south, room1, room4).
@@ -87,12 +106,12 @@ print_introduction:-
     print('Welcome to Adventures at Utah State University. Go ahead and walk through some of the different rooms in the TSC that you may be familiar with.'), nl,
     print('As you go from one room to another, you will see a description of that room.'), nl,
     print('Remember that you are at the TSC during the HOWL Halloween party, so crazy stuff happens. When you\'re ready to start your quest, just type \'quest\'.'), nl,
-    print('Hope you enjoy!'), nl, nl.
+    print('Hope you enjoy!'), nl, nl, nl.
 
 % Prints out the players current location description
 print_location :-
     current_area(Current),
-    area(Current, _, Description), write(Description), nl. 
+    area(Current, _, Description), write(Description), nl, nl. 
 
 print_inventory([]).
 print_inventory([H|T]):-
@@ -108,19 +127,53 @@ change_area(NewArea) :-
 dispPrompt :- prompt(_, '> ').
 
 % Add some help output here to explain how to play your game
-process_input([help]) :- print('Add some help output here...'), nl.
+process_input([help]) :- print('Add some help output here...'), nl, nl.
+
+% Input for eating the candy and any other food items
+process_input([eat, candy]):-
+    have(candy),
+    retract(have(candy)),
+    print('You have eaten the candy bar. If you get hungry, go back to the Quick Stop to get more food!'), nl, nl.
+process_input([eat, _]):-
+    print('You must have the candy bar to eat it!'), nl, nl.
 
 % Opens doors and such if it is unlocked
 process_input([open, Item]):-
+    have(key),
     unlocked(Item),
-    print('You have opened the door!'), nl.
+    retract(have(key)),
+    print('You have opened the door!'), nl, nl.
 process_input([open, _]):-
-    print('You can\'t open the door, it is still locked.'), nl.
+    print('You can\'t open the door, it is still locked.'), nl, nl.
 
 % Print out a players inventory
 process_input([inventory]) :-
     findall(Item, have(Item), ItemList),
     print_inventory(ItemList).
+
+% Print out a players backpack contents
+process_input([contents]):-
+    findall(Content, in_backpack(Content), ContentList),
+    print_inventory(ContentList).
+
+% Handling of the action 'drop ______'
+process_input([drop, Item]):-
+    have(Item),
+    retract(have(Item)),
+    item(Item, ItemName, _),
+    print('You have dropped the '), write(ItemName), write('.'), nl, nl.
+process_input([drop, _]):-
+    print('You have nothing in your inventory by that name!'), nl, nl.
+
+% Place items in your backpack
+process_input([fill_backpack, Item]):-
+    have(backpack),
+    have(Item),
+    assertz(in_backpack, Item),
+    item(Item, ItemName, Description),
+    print('You placed the '), write(ItemName), print(' in your backpack.'), print(Description), nl, nl.
+process_input([fill_backpack, _]):-
+    print('You either don\'t have the backpack or have nothing to put in it!'), nl, nl.
 
 % Handling of the action 'pickup _______'
 process_input([pickup, Item]):-
@@ -130,7 +183,7 @@ process_input([pickup, Item]):-
     item(Item, ItemName, Description),
     print('You picked up a(n) '), write(ItemName), print('. Description: '), print(Description), nl, nl.
 process_input([pickup, _]) :-
-    print('There is nothing to pick up with that description. Sorry!'), nl, nl.
+    print('There is nothing to pick up with that name. Sorry!'), nl, nl.
 
 % Handling of the action 'go _______', and a good example of how you might implement others
 process_input([go, Direction]) :-
