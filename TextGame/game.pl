@@ -223,7 +223,7 @@ process_input([drop, _]):-
 process_input([fill_backpack, Item]):-
     have(backpack),
     have(Item),
-    assertz(in_backpack, Item),
+    assertz(in_backpack(Item)),
     item(Item, ItemName, Description),
     print('You placed the '), write(ItemName), print(' in your backpack.'), print(Description), nl, nl.
 process_input([fill_backpack, _]):-
