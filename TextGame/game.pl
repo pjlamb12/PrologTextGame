@@ -21,7 +21,7 @@
 :- dynamic in_backpack/1.
 
 % Use this dynamic fact to unlock doors and other similar items
-:- dynamic unblocked/1.
+:- dynamic turned_on/1.
 
 % These are the items they can pick up
 item(key, 'Key', 'A key to open locked doors').
@@ -115,6 +115,7 @@ unblocked(room9, room6).
 play :-
     retractall(current_area(_)),
     retractall(have(_)),
+    retractall(in_backpack(_)),
     assertz(current_area(room8)),
     print_introduction,
     print_location,
@@ -153,6 +154,7 @@ process_input([help]) :-
     print('Type eat candy to eat the candy. You will lose the candy from your inventory after eating it.'), nl,
     print('Type drink soda to drink a Dr. Pepper. You will lose the soda from your inventory after doing so.'), nl,
     print('Type turnon flashlight to turn the flashlight on to light your way.'), nl,
+    print('Type enter passage to enter the secret passage to take you right to the end. You will need a certain item, and the passage is hidden!'), nl,
     print('Type open door to open a door. Make sure to have any items you will need to open the door first!'), nl,
     print('Type inventory to see what you have in your inventory.'), nl,
     print('Type contents to see what you have in your backpack.'), nl,
@@ -186,9 +188,20 @@ process_input([eat, _]):-
 % Handling of the action 'turnon _______'
 process_input([turnon, flashlight]):-
     have(flashlight),
+    assertz(turned_on(flashlight)),
     print('You have turned on the flashlight! It will now light your way through the dark rooms.'), nl, nl.
 process_input([eat, _]):-
     print('You must have the flashlight to turn it on. Nice try though!'), nl, nl.
+
+% Handling of the action 'enter ______'
+process_input([enter, passage]):-
+    have(flashlight),
+    turned_on(flashlight),
+    current_area(room1),
+    print('You are entering the tunnel!'), nl,
+    change_area(room9), nl, nl.
+process_input([enter, _]):-
+    print('What does passage mean? I don\'t know what you are talking about...'), nl, nl.
 
 % Handling of the action 'open _______'
 process_input([open, Item]):-

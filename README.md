@@ -27,6 +27,7 @@ print('Type eat candy to eat the candy. You will lose the candy from your invent
 print('Type drink soda to drink a Dr. Pepper. You will lose the soda from your inventory after doing so.'), nl,
 print('Type turnon flashlight to turn the flashlight on to light your way.'), nl,
 print('Type open door to open a door. Make sure to have any items you will need to open the door first!'), nl,
+print('Type enter passage to enter the secret passage to take you right to the end. You will need a certain item, and the passage is hidden!'), nl,
 print('Type inventory to see what you have in your inventory.'), nl,
 print('Type contents to see what you have in your backpack.'), nl,
 print('Type drop followed by an item name to drop the item from your inventory.'), nl,
